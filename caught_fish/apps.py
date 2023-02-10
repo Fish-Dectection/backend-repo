@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class DistinctionConfig(AppConfig):
+class CaughtFishConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'distinction'
+    name = 'caught_fish'

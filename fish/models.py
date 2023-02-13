@@ -1,5 +1,6 @@
 from django.db import models
-
+from caught_fish.models import CaughtFish
+from django.utils import timezone
 class Fish(models.model):
     fish_name = models.CharField(max_length=50, null=False, unique=True)
     scientific_name = models.CharField(max_length=50, null=False, unique=True)
@@ -19,7 +20,6 @@ class Fish(models.model):
     # 즉, 객체를 문자열로 표현한걸 반환해줌.
     def __str__(self):
        return self.fish_name
-
 class FishImage(models.Model):
     # N:1 관계인 경우, N모델에서 외래키 정의하면 상대 모델에서의 관계는 자동으로 정의됨.
     fish_id = models.ForeignKey(Fish, on_delete=models.CASCADE)
@@ -27,3 +27,4 @@ class FishImage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     is_deleted = models.BooleanField(default=True, null=False)
+

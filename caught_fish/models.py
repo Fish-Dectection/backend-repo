@@ -8,11 +8,11 @@ class Caught_fish(models.Model):
     user_region = models.CharField(max_length=225)
     image_url = models.CharField(max_length=225)
 
-    main_fish_id = models.ForeignKey(Fish, on_delete=models.CASECADE, null=True)
+    main_fish_id = models.ForeignKey(Fish, on_delete=models.CASCADE, null=True, related_name='main_caught_fish_set')
     main_fish_accuracy = models.FloatField(null=True)
-    sub1_fish_id = models.ForeignKey(Fish, on_delete=models.CASECADE, null=True)
+    sub1_fish_id = models.ForeignKey(Fish, on_delete=models.CASCADE, null=True, related_name='sub1_caught_fish_set')
     sub1_fish_accuracy = models.FloatField(null=True)
-    sub2_fish_id = models.ForeignKey(Fish, on_delete=models.CASECADE, null=True)
+    sub2_fish_id = models.ForeignKey(Fish, on_delete=models.CASCADE, null=True, related_name='sub2_caught_fish_set')
     sub2_fish_accuracy = models.FloatField(null=True)
     
     create_at = models.DateTimeField(default=timezone.now)

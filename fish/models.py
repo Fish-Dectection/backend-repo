@@ -26,6 +26,6 @@ class FishImage(models.Model):
     image_url = models.CharField(max_length=225)
 
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    is_deleted = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+    is_deleted = models.BooleanField(default=True, null=True)
 

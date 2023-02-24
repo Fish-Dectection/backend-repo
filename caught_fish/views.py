@@ -5,6 +5,9 @@ from .models import Caught_fish
 from .serializers import CaughtFishSerializer
 from django.http import QueryDict
 
+from .tasks import decision
+
+import requests
 
 # Create your views here.
 
@@ -18,6 +21,11 @@ def aiResult():
 
     return mfi, mfa, s1fi, s1fa, s2fi, s2fa
 
+
+
+
+
+
 class Caught_fish_View(generics.CreateAPIView):
     #queryset = Caught_fish.objects.all()
     serializer_class = CaughtFishSerializer
@@ -25,7 +33,7 @@ class Caught_fish_View(generics.CreateAPIView):
     def post(self, request):  
         req_serializer =  CaughtFishSerializer(data=request.data)
         
-        print(request)
+        print(request.data)
         #요청값 데이터 베이스 저장
         req_serializer.is_valid()        
         req_serializer.save()
@@ -33,7 +41,14 @@ class Caught_fish_View(generics.CreateAPIView):
         #task_id 발급 (Task.py(셀러리)에서 구현)
         task_id = 1
 
-        #셀러리로 전송                
+        #셀러리로 전송
+        test =  decision(request)
+        resultVal = test.content
+
+        #local test        
+        # test = requests.post('http://localhost:5001/test/',json={"id": request.data}) 
+        # resultVal = test.content
+        print(resultVal)       
                        
         return Response(task_id, status=200)
        

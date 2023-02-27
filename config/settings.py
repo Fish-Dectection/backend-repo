@@ -17,7 +17,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 #환경변수 설정
 env = environ.Env(DEBUG=(bool, True))
 
@@ -51,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'fish',
     'caught_fish',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -136,9 +136,22 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
+###S3 Storages
+AWS_ACCESS_KEY_ID = env('Access_key_ID')
+AWS_SECRET_ACCESS_KEY = env('Secret_access_key')
+AWS_REGION = 'ap-northeast-2'
+AWS_STORAGE_BUCKET_NAME = 'uts-fish-images'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.%s.amazonaws.com' % (AWS_STORAGE_BUCKET_NAME, AWS_REGION)
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+AWS_S3_HOST = 's3.ap-northeast-2.amazonaws.com'
+AWS_QUERYSTRING_AUTH = False
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

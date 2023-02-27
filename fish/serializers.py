@@ -1,11 +1,12 @@
+from django.conf import settings
 from rest_framework import serializers
-from .models import Fish, FishImage
-class FishSerializer(serializers.ModelSerializer):
-    class FishImageSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = FishImage
-            fields = ('fish_id', 'image_url')
+from .models import *
 
+class FishImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FishImage
+        fields = ('fish_id', 'image_url')
+class FishSerializer(serializers.ModelSerializer):
     fish_images = FishImageSerializer(many=True, source='fishimage_set')
     class Meta:
         model = Fish
@@ -39,5 +40,4 @@ class FishSerializer(serializers.ModelSerializer):
     def delete(self, instance):
         instance.is_deleted = True
         instance.save()
-
 

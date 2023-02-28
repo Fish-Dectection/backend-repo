@@ -50,7 +50,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'fish',
     'caught_fish',
+    'django_celery_beat',
+    'django_celery_results',
     'storages',
+
 ]
 
 MIDDLEWARE = [
@@ -153,5 +156,18 @@ AWS_S3_OBJECT_PARAMETERS = {
 AWS_S3_HOST = 's3.ap-northeast-2.amazonaws.com'
 AWS_QUERYSTRING_AUTH = False
 
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
+#celery
+CELERY_BROKER_URL = 'amqp://chu:ehddnjs369!@localhost:5672//'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+
+

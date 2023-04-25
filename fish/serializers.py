@@ -6,6 +6,7 @@ class FishImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = FishImage
         fields = ('fish_id', 'image_url')
+        
 class FishSerializer(serializers.ModelSerializer):
     fish_images = FishImageSerializer(many=True, source='fishimage_set')
     class Meta:
@@ -40,4 +41,5 @@ class FishSerializer(serializers.ModelSerializer):
     def delete(self, instance):
         instance.is_deleted = True
         instance.save()
+
 

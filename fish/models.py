@@ -3,6 +3,7 @@ from caught_fish import *
 from datetime import datetime
 class Fish(models.Model):
     fish_name = models.CharField(max_length=50, unique=True)
+    E_fish_name = models.CharField(max_length=50, unique=True, default='')
     scientific_name = models.CharField(max_length=50, unique=True)
 
     start_date = models.DateField(null=True)

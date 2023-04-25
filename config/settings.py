@@ -140,7 +140,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
 MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 ###S3 Storages
 AWS_ACCESS_KEY_ID = env('Access_key_ID')
@@ -163,7 +165,8 @@ STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 
 #celery
-CELERY_BROKER_URL = 'amqp://chu:ehddnjs369!@localhost:5672//'
+# CELERY_BROKER_URL = 'amqp://chu:ehddnjs369!@localhost:5672//'
+CELERY_BROKER_URL = 'amqp://gaeul:ansrkdmf85@@localhost:5672//'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'

@@ -6,7 +6,9 @@ from fish.models import Fish
 class Caught_fish(models.Model):
     fish_length = models.FloatField()
     user_region = models.CharField(max_length=225)
-    image_url = models.CharField(max_length=225)
+    # image_url = models.CharField(max_length=225)
+    # image_url = models.FileField(upload_to=file_upload_path, null=True)
+    image_url = models.ImageField(upload_to='imgaes/', null=True)
 
     main_fish_id = models.ForeignKey(Fish, on_delete=models.CASCADE, null=True, related_name='main_caught_fish_set')
     main_fish_accuracy = models.FloatField(null=True)

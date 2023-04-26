@@ -19,7 +19,8 @@ class FishSerializer(serializers.ModelSerializer):
             'prohibition_length', 
             'prohibition_region', 
             'description',
-            'fish_images'
+            'fish_images',
+            'E_fish_name'
         )
 
     def create(self, validated_data):

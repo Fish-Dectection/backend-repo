@@ -4,18 +4,11 @@ from fish.models import Fish
 
 # Create your models here.
 class Caught_fish(models.Model):
+    fish_name = models.CharField(max_length=50, unique=True)
     fish_length = models.FloatField()
     user_region = models.CharField(max_length=225)
-    # image_url = models.CharField(max_length=225)
-    # image_url = models.FileField(upload_to=file_upload_path, null=True)
-    image_url = models.ImageField(upload_to='imgaes/', null=True)
-
-    main_fish_id = models.ForeignKey(Fish, on_delete=models.CASCADE, null=True, related_name='main_caught_fish_set')
-    main_fish_accuracy = models.FloatField(null=True)
-    sub1_fish_id = models.ForeignKey(Fish, on_delete=models.CASCADE, null=True, related_name='sub1_caught_fish_set')
-    sub1_fish_accuracy = models.FloatField(null=True)
-    sub2_fish_id = models.ForeignKey(Fish, on_delete=models.CASCADE, null=True, related_name='sub2_caught_fish_set')
-    sub2_fish_accuracy = models.FloatField(null=True)
+    image_url = models.CharField(max_length=225)
+    description = models.CharField(max_length=400)
     
     create_at = models.DateTimeField(default=timezone.now)
     update_at = models.DateTimeField(default=timezone.now)

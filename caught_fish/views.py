@@ -15,27 +15,9 @@ from django.http import HttpResponse
 import json
 
 from django.http import JsonResponse
+import math
 
-
-def region_cp(fish_info, request):
-    E_fish_name = fish_info['name']
-    fish_dic = Fish.objects.all()
-
-    location = fish_dic.filter(E_fish_name=E_fish_name).values('prohibition_region')
-
-    for i in location:
-        day = i['prohibition_region']
-    prohibit_r2 = day.split(" ")
-
-    user_location = request.POST['location']
-
-    if user_location in prohibit_r2:
-        region_return = "포획 불가능"
-    else:
-        region_return = "포획 가능"
-
-    return region_return
-
+# 금지체장 비교 함수
 def length_cp(fish_info, request):
     E_fish_name = fish_info['name']
     fish_dic = Fish.objects.all()
@@ -54,6 +36,7 @@ def length_cp(fish_info, request):
 
     return length_return
 
+# 금어기 비교 함수
 def phdate_cp(fish_info, request):
     E_fish_name = fish_info['name']
     fish_dic = Fish.objects.all()
@@ -95,30 +78,30 @@ def phdate_cp(fish_info, request):
 
     return returnVal
 
+# 최종 판별 결과 리턴
 def Final_result(fish_info, request):
     length = length_cp(fish_info, request)
-    region = region_cp(fish_info, request)
     date = phdate_cp(fish_info, request)
 
     if length == "포획 불가능": 
         final_return = "최종 포획 불가능"
     elif length == "포획 가능" and date == "포획 가능": 
         final_return = "최종 포획 가능"
-    elif length == "포획 가능" and date == "포획 불가능" and region == "포획 불가능":
-        final_return = "최종 포획 불가능" 
-    elif length == "포획 가능" and date == "포획 불가능" and region == "포획 가능":
-        final_return = "최종 포획 가능"
+    elif length == "포획 가능" and date == "포획 불가능":
+        final_return = "최종 포획 불가능"
     else:
         final_return = "최종 포획 가능"
-        
+    
     return final_return
 
 # discern = DB에 저장된 금어기 정보 불러와서 딥러닝 판별결과랑 비교해서 최종 포획 가능 여부 판별하는 함수.
 # fish_ifo = 사용자 입력(위치, 길이, 이미지)
 def discern(fish_info, request): 
     confidence = fish_info["confidence"]
+    final_confidence = math.trunc(confidence * 100)
     
     final_return2 = Final_result(fish_info, request)
+    confidence_info = indistinguishable(fish_info, request)
 
     E_fish_name = fish_info['name']
     fish_dic = Fish.objects.all()
@@ -128,14 +111,25 @@ def discern(fish_info, request):
     return_region = fish_dic.get(E_fish_name=E_fish_name).prohibition_region
     return_length = fish_dic.get(E_fish_name=E_fish_name).prohibition_length
 
-    return fish_name, confidence, return_sd, return_ed, return_length, return_region, final_return2
+    return fish_name, final_confidence, return_sd, return_ed, return_length, return_region, final_return2, confidence_info
+
+# 식별 결과 임계값 0.5 이하일 경우, 판별 불가 안내(=미탐)
+def indistinguishable(fish_info, request):
+    confidence = fish_info["confidence"]
+    final_confidence = math.trunc(confidence * 100)
+
+    if final_confidence <= 50:
+        confidence_return = "판별 불가"
+    else: 
+        confidence_return = "해당없음"
+
+    return confidence_return
 
 class Caught_fish_View(generics.CreateAPIView):
     serializer_class = CaughtFishSerializer
 
     def post(self, request):  
         req_serializer =  CaughtFishSerializer(data=request.data)
-        print(request.data)
 
         # 이미지 파일 가져오기
         image_file = request.FILES.get('image')
@@ -146,18 +140,30 @@ class Caught_fish_View(generics.CreateAPIView):
             files = {'image': image_file}
             response = requests.post(url, files = files)
             resultVal = response.content
-            print(resultVal)
-
+            # bytes 타입을 문자열로 변환
+            resultVal_str = resultVal.decode('utf-8')
+            resultVal_dic = json.loads(resultVal_str)
+            resultVal_list = list(resultVal_dic)
+            
+            # 인식 불가, None리턴
+            if resultVal_list == b'[]':
+                discernVal = None
+                return JsonResponse({"response": "{0}".format(discernVal)}, status=200)
+            
+            # ai로부터 결과값이 2개 이상일 때의 예외처리
+            elif len(resultVal_list) > 1:
+                return JsonResponse({"response": "한 마리 사진만 입력하세요"}, status=200)
+            
         else:
-            resultVal = None
+            resultVal_str = None
 
         # ai서버로부터 받은 결과값을 딕셔너리로 반환
-        result_dict = json.loads(resultVal)
+        result_dict = json.loads(resultVal_str)
 
-        # 정확도, 어류 이름 딕셔너리로 반환
-        resultVal = {"confidence": result_dict[0]['confidence'], "name": result_dict[0]['name']}
-
-        discernVal = discern(resultVal, request)
+        # 정확도, 어류 이름 딕셔너리로 반환(식별)
+        resultVal_str = {"confidence": result_dict[0]['confidence'], "name": result_dict[0]['name']}
+        discernVal = discern(resultVal_str, request)
         
         return JsonResponse({"response": "{0}".format(discernVal)},status=200)
+
 

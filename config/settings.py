@@ -50,10 +50,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'fish',
     'caught_fish',
+    'feedback',
     'django_celery_beat',
     'django_celery_results',
     'storages',
-
 ]
 
 MIDDLEWARE = [
@@ -141,9 +141,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
 ###S3 Storages
 AWS_ACCESS_KEY_ID = env('Access_key_ID')
 AWS_SECRET_ACCESS_KEY = env('Secret_access_key')
@@ -165,8 +162,7 @@ STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 
 #celery
-# CELERY_BROKER_URL = 'amqp://chu:ehddnjs369!@localhost:5672//'
-CELERY_BROKER_URL = 'amqp://gaeul:ansrkdmf85@@localhost:5672//'
+CELERY_BROKER_URL = env('celery_broker_url')
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'

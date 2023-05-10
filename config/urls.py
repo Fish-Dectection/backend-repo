@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('caught_fish.urls')),
     path('', include('fish.urls')),
+    path('', include('feedback.urls'))
 ] 
 

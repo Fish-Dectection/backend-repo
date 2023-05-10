@@ -27,9 +27,9 @@ class FishDetailView(APIView):
         return Response({"fish": fish_serializer.data})
 
 class FishImageView(APIView): 
-    def post(self, request, fish_id, format=None) :
+    def post(self, request, fish_name, format=None):
         try:
-            fish = Fish.objects.get(id=fish_id)
+            fish = Fish.objects.get(fish_name=fish_name)
         except ObjectDoesNotExist:
             return Response({"ERROR": "Fish not found"}, status=404)
         
@@ -41,14 +41,14 @@ class FishImageView(APIView):
                 aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
                 region_name=settings.AWS_REGION,
             )
-            key = f"fish/{fish_id}/"
+            key = f"fish/{fish_name}/"
 
             for file in files :
                 file._set_name(str(uuid.uuid4()))
                 s3_resource.Bucket('uts-fish-images').put_object( Key=key + '%s'%(file), Body=file, ContentType='image/jpg')
                 image_file = ContentFile(file.read())
                 FishImage.objects.create(
-                    fish_id_id=fish_id, 
+                    fish_name=fish_name, 
                     image_url=f"{settings.AWS_S3_CUSTOM_DOMAIN}{key}{file}"
                 )
             

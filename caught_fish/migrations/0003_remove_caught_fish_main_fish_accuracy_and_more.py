@@ -40,9 +40,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='caught_fish',
             name='fish_name',
+            field=models.CharField(max_length=50, unique=True)
         ),
         migrations.AlterField(
             model_name='caught_fish',
             name='image_url',
             field=models.CharField(max_length=225, null=True),
         ),
+    ]

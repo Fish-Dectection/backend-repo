@@ -7,9 +7,9 @@ import django.utils.timezone
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('fish', '0013_alter_fish_e_fish_name'),
-    ]
+    # dependencies = [
+    #     ('fish', '0013_alter_fish_e_fish_name'),
+    # ]
 
     operations = [
         migrations.RemoveField(
